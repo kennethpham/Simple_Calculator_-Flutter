@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class CalculatorButton extends StatelessWidget {
   final String text;
   final void Function() buttonHandler;
-  CalculatorButton(this.text, this.buttonHandler);
+  const CalculatorButton(this.text, this.buttonHandler);
+
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -24,16 +24,6 @@ class SimpleCalculator extends StatelessWidget {
 
 class SimpleCalculatorState extends StatefulWidget {
   const SimpleCalculatorState({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -42,21 +32,50 @@ class SimpleCalculatorState extends StatefulWidget {
 
 class _SimpleCalculatorStateState extends State<SimpleCalculatorState> {
   int _currTotal = 0;
+  int _temp = 0;
+  String? _currOperator;
 
-  void buttonClick() {
+  void numberClick(int num) {
     setState(() {
-      _currTotal = _currTotal + 1;
+      if (_temp != 0) {
+        _currTotal = 0;
+      }
+      _currTotal *= 10;
+      _currTotal += num;
     });
+  }
+  void clearTotal() {
+    setState(() {
+      _currTotal = 0;
+      _temp = 0;
+    });
+  }
+  void operatorClick(String op) {
+    setState(() {
+      _temp = _currTotal;
+      _currOperator = op;
+    });
+  }
+  void equalsClick() {
+    if (_currOperator != null) {
+      setState(() {
+        if (_currOperator == '+') {
+          _currTotal += _temp;
+        } else if (_currOperator == '-') {
+          _currTotal = _temp - _currTotal;
+        } else if (_currOperator == '*') {
+          _currTotal *= _temp;
+        } else if (_currOperator == '/') {
+          _currTotal = _temp ~/ _currTotal;
+        }
+        _temp = 0;
+        _currOperator = null;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -92,10 +111,11 @@ class _SimpleCalculatorStateState extends State<SimpleCalculatorState> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CalculatorButton('7', buttonClick),
-                  CalculatorButton('8', buttonClick),
-                  CalculatorButton('9', buttonClick),
-                  CalculatorButton('/', buttonClick),
+                  CalculatorButton('7', () => numberClick(7)),
+                  CalculatorButton('8', () => numberClick(8)),
+                  CalculatorButton('9', () => numberClick(9)),
+                  CalculatorButton('/', () => operatorClick('/')),
+
                 ],
               ),
             ),
@@ -104,10 +124,10 @@ class _SimpleCalculatorStateState extends State<SimpleCalculatorState> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CalculatorButton('4', buttonClick),
-                  CalculatorButton('5', buttonClick),
-                  CalculatorButton('6', buttonClick),
-                  CalculatorButton('*', buttonClick),
+                  CalculatorButton('4', () => numberClick(4)),
+                  CalculatorButton('5', () => numberClick(5)),
+                  CalculatorButton('6', () => numberClick(6)),
+                  CalculatorButton('*', () => operatorClick('*')),
                 ],
               ),
             ),
@@ -116,10 +136,10 @@ class _SimpleCalculatorStateState extends State<SimpleCalculatorState> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CalculatorButton('1', buttonClick),
-                  CalculatorButton('2', buttonClick),
-                  CalculatorButton('3', buttonClick),
-                  CalculatorButton('-', buttonClick),
+                  CalculatorButton('1', () => numberClick(1)),
+                  CalculatorButton('2', () => numberClick(2)),
+                  CalculatorButton('3', () => numberClick(3)),
+                  CalculatorButton('-', () => operatorClick('-')),
                 ],
               ),
             ),
@@ -129,9 +149,10 @@ class _SimpleCalculatorStateState extends State<SimpleCalculatorState> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CalculatorButton('0', buttonClick),
-                  CalculatorButton('=', buttonClick),
-                  CalculatorButton('+', buttonClick),
+                  CalculatorButton('0', () => numberClick(0)),
+                  CalculatorButton('=', equalsClick),
+                  CalculatorButton('+', () => operatorClick('+')),
+                  CalculatorButton('C', clearTotal),
                 ],
               ),
             ),
